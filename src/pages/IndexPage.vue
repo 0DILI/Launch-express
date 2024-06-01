@@ -3,7 +3,9 @@
     <div class="main-section__flex-container">
       <!-- MAIN-SECTION__INNER-DIV-1 -->
       <div class="main-section__inner-div-1">
-        <h4 class="title">Create New Post</h4>
+        <h4 class="title" @click="count.increment">
+          Create New Post{{ count.count }}
+        </h4>
 
         <!-- Brand & Type -->
         <div class="flex gap-medium">
@@ -54,6 +56,7 @@
             rows="20"
             cols="40"
             class="content"
+            v-model="count.state.content"
             autocomplete="off"
             role="textbox"
             aria-autocomplete="list"
@@ -65,12 +68,24 @@
         <!-- Upload Media -->
         <div>
           <h5 class="label-text">Upload Media:</h5>
-          <span class="flex justify-center items-center upload-media">
-            <i class="fa-solid fa-upload"></i>
-            <p class="extra_small-text" style="font-weight: 600; margin: 0">
-              Upload...
-            </p>
-          </span>
+
+          <label
+            for="dropzone-file6"
+            class="flex flex-col w-[50px] h-40 border-2 border-dashed rounded-lg cursor-pointer"
+          >
+            <span class="flex justify-center items-center upload-media">
+              <i class="fa-solid fa-upload"></i>
+              <p class="extra_small-text" style="font-weight: 600; margin: 0">
+                Upload...
+              </p>
+            </span>
+            <input
+              id="dropzone-file6"
+              type="file"
+              class="hidden"
+              @change="filesChange($event.target.name, $event.target.files)"
+            />
+          </label>
         </div>
 
         <!-- First Comment  -->
@@ -133,20 +148,14 @@
           </div>
 
           <img
-            src="../assets/fox-img.png"
+            :src="count.state.image"
             alt=""
             style="object-fit: contain; width: 100%; height: 100%"
           />
           <span class="extra_small-text q-px-sm q-pt-md">
             <p style="margin: 0" class="">
-              Feeling the mystery of the day with a touch of the undefined love
-              🔮!
+              {{ count.state.content }}
             </p>
-
-            <p style="margin: 0" class="q-pt-sm">
-              Embrace the unknown, for it's where true adventure begins!
-            </p>
-
             <a href="" class="q-pt-sm">#Undefined #Mystery #AdventureBegins</a>
           </span>
         </div>
@@ -154,6 +163,23 @@
     </div>
   </section>
 </template>
+
+<script setup>
+import { usePostStore } from 'src/store/post';
+
+let count = usePostStore();
+
+function filesChange(fieldName, fileList) {
+  let fileToUpload = fileList[0];
+  var reader = new FileReader();
+  reader.onload = (event) => {
+    count.state.image = event.target.result;
+  };
+  reader.readAsDataURL(fileToUpload);
+  if (!fileList.length) return;
+  return fileToUpload;
+}
+</script>
 
 <style lang="scss">
 .main-section__flex-container {
