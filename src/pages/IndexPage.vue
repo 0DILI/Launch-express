@@ -162,7 +162,7 @@
           <p @click="preview = 0">Preview</p>
           <p @click="preview = 1">Hashtags</p>
         </div>
-        <div class="preview__card" v-if="preview == 0">
+        <div class="preview__card" style="margin-top: 1rem" v-if="preview == 0">
           <div class="profile__container">
             <span class="profile">
               <img
@@ -197,9 +197,16 @@
           </span>
         </div>
 
-        <div class="main-section__inner-div-2" v-if="preview == 1">
+        <div v-if="preview == 1">
           <!-- HASHTAG CARD -->
-          <div style="padding: 20px">
+          <div
+            style="
+              padding: 20px;
+              background-color: white;
+              border-radius: 15px;
+              margin-top: 1rem;
+            "
+          >
             <div class="hashtag__card">
               <h5 class="label-text" style="text-align: center">
                 Suggested Hashtags:
@@ -220,9 +227,9 @@
               </div>
             </div>
 
-            <div class="flex justify-center q-pt-lg">
+            <!-- <div class="flex justify-center q-pt-lg">
               <q-btn color="white" text-color="purple" label="Add Hashtags" />
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -275,6 +282,7 @@ function addTag(tag) {
 .main-section__inner-div-1 {
   background-color: #fff;
   padding: 0 1.8rem;
+  padding-bottom: 1rem;
   grid-column: span 3;
 }
 
@@ -418,7 +426,7 @@ input:checked + .slider .off {
 .slider.round {
   border-radius: 10px;
 }
-ss .slider.round:before {
+.slider.round:before {
   border-radius: 50%;
 }
 /* Toggle switch css ends here */
@@ -434,13 +442,13 @@ ss .slider.round:before {
   color: var(--purple);
 }
 
-extarea {
-  width: 100%;
-  border: 2px solid var(--grey);
-  border-radius: 10px;
+// extarea {
+//   width: 100%;
+//   border: 2px solid var(--grey);
+//   border-radius: 10px;
 
-  box-sizing: border-box;
-}
+//   box-sizing: border-box;
+// }
 
 .content {
   height: 130px;
