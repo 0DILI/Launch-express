@@ -3,7 +3,9 @@
     <div class="main-section__flex-container">
       <!-- MAIN-SECTION__INNER-DIV-1 -->
       <div class="main-section__inner-div-1">
-        <h4 class="title">Create New Post</h4>
+        <h4 class="title" @click="count.increment">
+          Create New Post{{ count.count }}
+        </h4>
 
         <!-- Brand & Type -->
         <div class="flex gap-medium">
@@ -49,28 +51,80 @@
               </span>
             </div>
           </div>
-
+          <!--
           <textarea
             rows="20"
             cols="40"
             class="content"
+            v-model="count.state.content"
             autocomplete="off"
             role="textbox"
             aria-autocomplete="list"
             aria-haspopup="true"
-          ></textarea>
+          ></textarea> -->
+
+          <!-- <div class="content">
+            <q-inpu
+            t v-model="count.state.content" filled type="textarea" />
+          </div> -->
+          <div
+            class="extra_small-text q-px-sm q-pt-md"
+            style="background-color: #e6e6e6"
+          >
+            <p style="margin: 0" class="">
+              <!-- <q-input
+                v-model="count.state.content"
+                filled
+                type="textarea"
+                :style="{ opacity: 0 }"
+                style="color: red"
+              /> -->
+
+              <textarea
+                rows="20"
+                cols="40"
+                class="content"
+                v-model="count.state.content"
+                autocomplete="off"
+                role="textbox"
+                aria-autocomplete="list"
+                aria-haspopup="true"
+              ></textarea>
+            </p>
+            <div class="flex items-center" style="gap: 5px">
+              <a
+                href=""
+                class="q-pt-sm"
+                v-for="(item, index) in count.state.tags"
+                :key="index"
+                >{{ item }}
+              </a>
+            </div>
+          </div>
           <p class="word_count">56/2,200</p>
         </div>
 
         <!-- Upload Media -->
         <div>
           <h5 class="label-text">Upload Media:</h5>
-          <span class="flex justify-center items-center upload-media">
-            <i class="fa-solid fa-upload"></i>
-            <p class="extra_small-text" style="font-weight: 600; margin: 0">
-              Upload...
-            </p>
-          </span>
+
+          <label
+            for="dropzone-file6"
+            class="flex flex-col w-[50px] h-40 border-2 border-dashed rounded-lg cursor-pointer"
+          >
+            <span class="flex justify-center items-center upload-media">
+              <i class="fa-solid fa-upload"></i>
+              <p class="extra_small-text" style="font-weight: 600; margin: 0">
+                Upload...
+              </p>
+            </span>
+            <input
+              id="dropzone-file6"
+              type="file"
+              class="hidden"
+              @change="filesChange($event.target.name, $event.target.files)"
+            />
+          </label>
         </div>
 
         <!-- First Comment  -->
@@ -87,36 +141,28 @@
             </span>
           </div>
 
-          <textarea
-            rows="20"
-            cols="40"
-            class="comment"
-            autocomplete="off"
-            role="textbox"
-            aria-autocomplete="list"
-            aria-haspopup="true"
-          ></textarea>
+          <div class="content">
+            <q-input v-model="text" filled type="textarea" />
+          </div>
         </div>
 
         <!-- Location -->
         <div class="flex items-center justify-between q-pt-md">
           <h5 class="label-text">Location:</h5>
-
-          <textarea
-            rows="20"
-            cols="40"
-            class="comment"
-            autocomplete="off"
-            role="textbox"
-            aria-autocomplete="list"
-            aria-haspopup="true"
-          ></textarea>
+          <div class="content">
+            <q-input filled type="textarea" />
+          </div>
         </div>
       </div>
 
       <!-- MAIN-SECTION__INNER-DIV-2 -->
+
       <div class="main-section__inner-div-2">
-        <div class="preview__card">
+        <div class="nav-container">
+          <p @click="preview = 0">Preview</p>
+          <p @click="preview = 1">Hashtags</p>
+        </div>
+        <div class="preview__card" v-if="preview == 0">
           <div class="profile__container">
             <span class="profile">
               <img
@@ -133,27 +179,93 @@
           </div>
 
           <img
-            src="../assets/fox-img.png"
+            :src="count.state.image"
             alt=""
             style="object-fit: contain; width: 100%; height: 100%"
           />
           <span class="extra_small-text q-px-sm q-pt-md">
             <p style="margin: 0" class="">
-              Feeling the mystery of the day with a touch of the undefined love
-              🔮!
+              {{ count.state.content }}
             </p>
-
-            <p style="margin: 0" class="q-pt-sm">
-              Embrace the unknown, for it's where true adventure begins!
-            </p>
-
-            <a href="" class="q-pt-sm">#Undefined #Mystery #AdventureBegins</a>
+            <a
+              href=""
+              class="q-pt-sm"
+              v-for="(item, index) in count.state.tags"
+              :key="index"
+              >{{ item }}
+            </a>
           </span>
+        </div>
+
+        <div class="main-section__inner-div-2" v-if="preview == 1">
+          <!-- HASHTAG CARD -->
+          <div style="padding: 20px">
+            <div class="hashtag__card">
+              <h5 class="label-text" style="text-align: center">
+                Suggested Hashtags:
+              </h5>
+
+              <div
+                class="checkbox-container q-pt-lg"
+                v-for="(item, index) in tags"
+                :key="index"
+              >
+                <input
+                  type="checkbox"
+                  id="myCheckbox"
+                  :value="item"
+                  @change="addTag(item)"
+                />
+                <label for="myCheckbox" class="hashtag"> {{ item }} </label>
+              </div>
+            </div>
+
+            <div class="flex justify-center q-pt-lg">
+              <q-btn color="white" text-color="purple" label="Add Hashtags" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<script setup>
+import { usePostStore } from 'src/store/post';
+import { ref } from 'vue';
+
+let count = usePostStore();
+let preview = ref(0);
+
+let tags = [
+  '#BigMystery',
+  '#HugeAdventure',
+  '#NoStoppingUs',
+  '#TimeWillTell',
+  '#Love4Ever',
+  '#Unknown',
+];
+
+function filesChange(fieldName, fileList) {
+  let fileToUpload = fileList[0];
+  var reader = new FileReader();
+  reader.onload = (event) => {
+    count.state.image = event.target.result;
+  };
+  reader.readAsDataURL(fileToUpload);
+  if (!fileList.length) return;
+  return fileToUpload;
+}
+
+function addTag(tag) {
+  const tagIndex = count.state.tags.indexOf(tag);
+  if (tagIndex === -1) {
+    count.state.tags.push(tag);
+  } else {
+    count.state.tags.splice(tagIndex, 1);
+  }
+}
+</script>
 
 <style lang="scss">
 .main-section__flex-container {
@@ -224,8 +336,7 @@
   gap: 20px;
   margin-top: -20px;
 }
-
-.brand__flex-container h5 {
+s .brand__flex-container h5 {
   line-height: 0;
 }
 
@@ -307,8 +418,7 @@ input:checked + .slider .off {
 .slider.round {
   border-radius: 10px;
 }
-
-.slider.round:before {
+ss .slider.round:before {
   border-radius: 50%;
 }
 /* Toggle switch css ends here */
@@ -324,26 +434,30 @@ input:checked + .slider .off {
   color: var(--purple);
 }
 
-textarea {
+extarea {
   width: 100%;
   border: 2px solid var(--grey);
   border-radius: 10px;
-  resize: none;
+
   box-sizing: border-box;
 }
 
 .content {
   height: 130px;
+  width: 100%;
+  background: #e6e6e6;
+  border: 0;
 }
 
 .comment {
-  height: 80px;
+  height: 20px;
+  width: 100%;
 }
-
 .word_count {
   font-size: var(--font-size-extra_small);
   display: flex;
   justify-content: end;
+  padding-top: 8px;
 }
 
 .upload-media {
@@ -383,5 +497,74 @@ textarea {
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
+}
+
+ashtag__card {
+  background-color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 10px;
+  padding-bottom: 1.2rem;
+  margin-top: 2rem;
+}
+
+.nav-container {
+  background-color: #f1f5f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 1rem;
+  padding: 0.6rem;
+  border-radius: 5px;
+  color: var(--light_purple);
+  font-weight: 600;
+}
+
+.nav-container p {
+  margin: 0;
+}
+
+.nav-container p:hover {
+  background-color: #fff;
+  padding: 0.4rem;
+  border-radius: 5px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-container input[type='checkbox'] {
+  width: 20px; /* Set the width of the checkbox */
+  height: 20px; /* Set the height of the checkbox */
+  margin-right: 8px;
+  appearance: none; /* Remove default checkbox styling */
+  border: 2px solid #c559ff; /* Set the outline color */
+  border-radius: 3px; /* Optional: rounded corners */
+  position: relative; /* For pseudo-element positioning */
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+.checkbox-container input[type='checkbox']::before {
+  content: ''; /* Required for pseudo-element */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px; /* Inner box size */
+  height: 14px; /* Inner box size */
+  background-color: transparent; /* Default background */
+  transform: translate(-50%, -50%);
+  border-radius: 2px; /* Match outer border radius */
+}
+
+.checkbox-container input[type='checkbox']:checked::before {
+  background-color: #c559ff; /* Checked background color */
+  border-radius: 2px;
+}
+
+.hashtag {
+  color: var(--purple);
+  font-size: 16px;
+  text-decoration: none;
 }
 </style>
